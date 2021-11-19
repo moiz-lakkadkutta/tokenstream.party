@@ -43,7 +43,7 @@ function UserStream({ stream, provider, localProvider, readContracts, ...props }
       createWithdrawEvents({ SimpleStream }, "SimpleStream", "Withdraw", provider, 1);
       createDepositEvents({ SimpleStream }, "SimpleStream", "Deposit", provider, 1);
     }
-  }, [SimpleStream.streamBalance]);
+  }, [SimpleStream && SimpleStream.streamBalance]);
 
   return ready ? (
     <ExampleUI

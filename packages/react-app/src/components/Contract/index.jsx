@@ -126,6 +126,7 @@ export default function Contract({
                 mainnetProvider={provider}
                 price={price}
                 blockExplorer={blockExplorer}
+                isContract={true}
               />
               {account}
             </div>

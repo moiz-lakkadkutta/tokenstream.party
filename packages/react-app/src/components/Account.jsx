@@ -106,8 +106,6 @@ export default function Account({
             color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
           />
         </>
-      ) : false ? (
-        ""
       ) : isContract ? (
         <>
           <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
@@ -115,24 +113,7 @@ export default function Account({
         </>
       ) : (
         <></>
-      )}
-      {false ? (
-        <>
-          <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
-          <Balance address={address} provider={localProvider} price={price} />
-          <Wallet
-            address={address}
-            provider={localProvider}
-            signer={userSigner}
-            ensProvider={mainnetProvider}
-            price={price}
-            color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
-          />
-        </>
-      ) : (
-        <></>
-      )}
-     
+      )}     
     </span>
   );
 

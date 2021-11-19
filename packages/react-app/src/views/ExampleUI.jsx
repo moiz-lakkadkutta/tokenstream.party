@@ -1,11 +1,25 @@
 import { formatEther, parseEther } from "@ethersproject/units";
-import { Button, Divider, Input, List, message, notification, Progress } from "antd";
+import {
+  Button,
+  Divider,
+  Input,
+  List,
+  message,
+  notification,
+  Progress
+} from "antd";
 import axios from "axios";
 import { useContractReader } from "eth-hooks";
 import { ethers } from "ethers";
 import pretty from "pretty-time";
 import React, { useEffect, useState } from "react";
-import { Address, AddressInput, Balance, PayButton, QRPunkBlockie } from "../components";
+import {
+  Address,
+  AddressInput,
+  Balance,
+  PayButton,
+  QRPunkBlockie
+} from "../components";
 
 export default function ExampleUI({
   SimpleStream,
@@ -21,7 +35,7 @@ export default function ExampleUI({
   price,
   tx,
   readContracts,
-  writeContracts,
+  writeContracts
 }) {
   const [amount, setAmount] = useState();
   const [reason, setReason] = useState();
@@ -32,28 +46,52 @@ export default function ExampleUI({
 
   console.log("streamCap", streamCap);
   console.log("streamBalance", streamBalance);
-  const percent = streamCap && streamBalance && streamBalance.mul(100).div(streamCap).toNumber();
+  const percent =
+    streamCap &&
+    streamBalance &&
+    streamBalance
+      .mul(100)
+      .div(streamCap)
+      .toNumber();
 
-  const myMainnetGTCBalance = useContractReader(readContracts, "GTC", "balanceOf", [stream]);
+  const myMainnetGTCBalance = useContractReader(
+    readContracts,
+    "GTC",
+    "balanceOf",
+    [stream]
+  );
 
-  if (myMainnetGTCBalance) console.log("my mainnet gtc balance", formatEther(myMainnetGTCBalance));
+  if (myMainnetGTCBalance)
+    console.log("my mainnet gtc balance", formatEther(myMainnetGTCBalance));
 
-  const streamNetPercentSeconds = myMainnetGTCBalance && streamCap && myMainnetGTCBalance.mul(100).div(streamCap);
+  const streamNetPercentSeconds =
+    myMainnetGTCBalance &&
+    streamCap &&
+    myMainnetGTCBalance.mul(100).div(streamCap);
 
   console.log(
     "streamNetPercentSeconds",
     streamNetPercentSeconds,
-    streamNetPercentSeconds && streamNetPercentSeconds.toNumber(),
+    streamNetPercentSeconds && streamNetPercentSeconds.toNumber()
   );
 
-  const totalSeconds = streamNetPercentSeconds && streamfrequency && streamNetPercentSeconds.mul(streamfrequency);
+  const totalSeconds =
+    streamNetPercentSeconds &&
+    streamfrequency &&
+    streamNetPercentSeconds.mul(streamfrequency);
   console.log("totalSeconds", totalSeconds);
 
   console.log("numberOfTimesFull", streamNetPercentSeconds);
-  const numberOfTimesFull = streamNetPercentSeconds && Math.floor(streamNetPercentSeconds.div(100));
+  const numberOfTimesFull =
+    streamNetPercentSeconds && Math.floor(streamNetPercentSeconds.div(100));
 
-  const streamNetPercent = streamNetPercentSeconds && streamNetPercentSeconds.mod(100);
-  console.log("streamNetPercent", streamNetPercent, streamNetPercent && streamNetPercent.toNumber());
+  const streamNetPercent =
+    streamNetPercentSeconds && streamNetPercentSeconds.mod(100);
+  console.log(
+    "streamNetPercent",
+    streamNetPercent,
+    streamNetPercent && streamNetPercent.toNumber()
+  );
 
   const remainder = streamNetPercent && streamNetPercent.mod(1);
   console.log("remainder", remainder, remainder && remainder.toNumber());
@@ -61,12 +99,16 @@ export default function ExampleUI({
   const [quoteRate, setQuoteRate] = useState(0);
 
   useEffect(() => {
-    axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=gitcoin").then(response => {
-      if (response && response.data[0] && response.data[0].current_price) {
-        setQuoteRate(response.data[0].current_price);
-        console.log("quoteRate price", response.data[0].current_price, price);
-      }
-    });
+    axios
+      .get(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=gitcoin"
+      )
+      .then(response => {
+        if (response && response.data[0] && response.data[0].current_price) {
+          setQuoteRate(response.data[0].current_price);
+          console.log("quoteRate price", response.data[0].current_price, price);
+        }
+      });
   }, []);
 
   // console.log("WWUOTE", formatEther(streamBalance).toString())
@@ -79,7 +121,13 @@ export default function ExampleUI({
   const widthOfStacks = numberOfTimesFull > 6 ? 32 : 64;
 
   for (let c = 0; c < numberOfTimesFull; c++) {
-    totalProgress.push(<Progress percent={100} showInfo={false} style={{ width: widthOfStacks, padding: 4 }} />);
+    totalProgress.push(
+      <Progress
+        percent={100}
+        showInfo={false}
+        style={{ width: widthOfStacks, padding: 4 }}
+      />
+    );
   }
   if (streamNetPercent && streamNetPercent.toNumber() > 0) {
     totalProgress.push(
@@ -88,7 +136,7 @@ export default function ExampleUI({
         showInfo={false}
         status="active"
         style={{ width: widthOfStacks, padding: 4 }}
-      />,
+      />
     );
   }
 
@@ -103,11 +151,11 @@ export default function ExampleUI({
           (update.gasLimit || update.gas) +
           " @ " +
           parseFloat(update.gasPrice) / 1000000000 +
-          " gwei",
+          " gwei"
       );
       notification.success({
         placement: "topRight",
-        ...notif,
+        ...notif
       });
       cb && cb();
     }
@@ -120,28 +168,34 @@ export default function ExampleUI({
       tx(
         SimpleStream.streamWithdraw(parseEther("" + amount), reason, toAddress),
         handleStreamWithMessage(
-          { message: "Withdrawal successful", description: "Your withdrawal from this stream has been processed." },
+          {
+            message: "Withdrawal successful",
+            description: "Your withdrawal from this stream has been processed."
+          },
           () => {
             setReason();
             setAmount();
-          },
-        ),
+          }
+        )
       );
     }
   };
 
   const tokenPayHandler = async tokenInfo => {
     // deposit amount and reason to stream after transfer confirmations
-    const formattedAmount = ethers.utils.parseUnits(depositAmount, tokenInfo.decimals);
+    const formattedAmount = ethers.utils.parseUnits(
+      depositAmount,
+      tokenInfo.decimals
+    );
     await tx(
       SimpleStream.streamDeposit(depositReason, formattedAmount),
       handleStreamWithMessage(
         {
           message: "Deposit successful",
-          description: `${depositAmount} ${tokenInfo.token} was deposited to this stream.`,
+          description: `${depositAmount} ${tokenInfo.token} was deposited to this stream.`
         },
-        null,
-      ),
+        null
+      )
     );
 
     setDepositReason();
@@ -162,11 +216,13 @@ export default function ExampleUI({
             <span style={{ opacity: 0.5 }}>
               {" "}
               @ <Balance value={streamCap} price={quoteRate} /> /{" "}
-              {streamfrequency && pretty(streamfrequency.toNumber() * 1000000000)}
+              {streamfrequency &&
+                pretty(streamfrequency.toNumber() * 1000000000)}
             </span>
           </div>
           <div>
-            {totalProgress} ({totalSeconds && pretty(totalSeconds.toNumber() * 10000000)})
+            {totalProgress} (
+            {totalSeconds && pretty(totalSeconds.toNumber() * 10000000)})
           </div>
         </div>
       </div>
@@ -175,7 +231,14 @@ export default function ExampleUI({
         <Address value={stream} />
       </div>
 
-      <div style={{ width: 400, margin: "auto", marginTop: 32, position: "relative" }}>
+      <div
+        style={{
+          width: 400,
+          margin: "auto",
+          marginTop: 32,
+          position: "relative"
+        }}
+      >
         <div style={{ padding: 16, marginBottom: 64 }}>
           <span style={{ opacity: 0.5 }}>Streaming To:</span>
         </div>
@@ -185,7 +248,15 @@ export default function ExampleUI({
         <Address value={streamToAddress} ensProvider={mainnetProvider} />
       </div>
 
-      <div style={{ border: "1px solid #cccccc", padding: 16, width: WIDTH, margin: "auto", marginTop: 64 }}>
+      <div
+        style={{
+          border: "1px solid #cccccc",
+          padding: 16,
+          width: WIDTH,
+          margin: "auto",
+          marginTop: 64
+        }}
+      >
         {/* <h4>stream balance: {streamBalance && formatEther(streamBalance)}</h4> */}
 
         <Progress
@@ -193,7 +264,9 @@ export default function ExampleUI({
           type="dashboard"
           percent={percent}
           format={() => {
-            return <Balance price={quoteRate} value={streamBalance} size={18} />;
+            return (
+              <Balance price={quoteRate} value={streamBalance} size={18} />
+            );
           }}
         />
 
@@ -233,14 +306,24 @@ export default function ExampleUI({
         📑 Maybe display a list of events?
           (uncomment the event and emit line in YourContract.sol! )
       */}
-      <div style={{ width: WIDTH, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+      <div
+        style={{
+          width: WIDTH,
+          margin: "auto",
+          marginTop: 32,
+          paddingBottom: 32
+        }}
+      >
         <h2>Work log:</h2>
         <List
           bordered
           dataSource={withdrawEvents}
           renderItem={item => {
             return (
-              <List.Item key={item.blockNumber + "_" + item.to}>
+              <List.Item
+                id={item.blockNumber + "_" + item.to}
+                key={item.blockNumber + "_" + item.to}
+              >
                 <Balance value={item.amount} price={quoteRate} />
                 <span style={{ fontSize: 14 }}>
                   <span style={{ padding: 4 }}>{item.reason}</span>

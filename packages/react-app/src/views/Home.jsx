@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import { Button, InputNumber, List, Modal, notification, Radio } from "antd";
 import { ethers } from "ethers";
-import { Modal, Button, notification, Radio, InputNumber, List } from "antd";
-import { AddressInput, Address } from "../components";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { Address, AddressInput } from "../components";
 
-export default function Home({ mainnetProvider, tx, writeContracts, readContracts, streams, ...props }) {
+export default function Home({
+  mainnetProvider,
+  tx,
+  writeContracts,
+  readContracts,
+  streams,
+  ...props
+}) {
   const history = useHistory();
   const [amount, setAmount] = useState(1);
   const [userAddress, setUserAddress] = useState("");
@@ -15,7 +22,9 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
 
   const createNewStream = async () => {
     const capFormatted = ethers.utils.parseEther(`${amount || "1"}`);
-    const frequencyFormatted = ethers.BigNumber.from(`${duration || 1}`).mul("604800");
+    const frequencyFormatted = ethers.BigNumber.from(`${duration || 1}`).mul(
+      "604800"
+    );
     const _startFull = startFull === 1;
     const GTCContractAddress = readContracts && readContracts.GTC.address;
 
@@ -26,9 +35,9 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
           capFormatted,
           frequencyFormatted,
           _startFull,
-          GTCContractAddress,
+          GTCContractAddress
         ),
-      async update => {
+      async (update) => {
         console.log("📡 Transaction Update:", update);
         if (update && (update.status === "confirmed" || update.status === 1)) {
           console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -39,7 +48,7 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
               (update.gasLimit || update.gas) +
               " @ " +
               parseFloat(update.gasPrice) / 1000000000 +
-              " gwei",
+              " gwei"
           );
           // reset form to default values
           setUserAddress("");
@@ -57,7 +66,7 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
             placement: "topRight",
           });
         }
-      },
+      }
     );
     console.log("awaiting metamask/web3 confirm result...", result);
     console.log(await result);
@@ -65,7 +74,11 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
 
   return (
     <div style={{ width: 600, margin: "20px auto", padding: 20 }}>
-      <Button style={{ marginTop: 20 }} type="primary" onClick={() => setNewStreamModal(true)}>
+      <Button
+        style={{ marginTop: 20 }}
+        type="primary"
+        onClick={() => setNewStreamModal(true)}
+      >
         Create New Stream
       </Button>
       {newStreamModal && (
@@ -77,7 +90,11 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
           onCancel={() => setNewStreamModal(false)}
         >
           <div style={{ marginBottom: 5 }}>Recipient:</div>
-          <AddressInput ensProvider={mainnetProvider} value={userAddress} onChange={a => setUserAddress(a)} />
+          <AddressInput
+            ensProvider={mainnetProvider}
+            value={userAddress}
+            onChange={(a) => setUserAddress(a)}
+          />
           <div style={{ marginBottom: 25 }} />
           <div style={{ display: "flex", flex: 1, flexDirection: "row" }}>
             <div style={{ flex: 1, flexDirection: "column" }}>
@@ -86,7 +103,7 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
                 placeholder="Amount"
                 min={1}
                 value={amount}
-                onChange={v => setAmount(v)}
+                onChange={(v) => setAmount(v)}
                 style={{ width: "100%" }}
               />
             </div>
@@ -97,14 +114,17 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
                 placeholder="Duration"
                 min={1}
                 value={duration}
-                onChange={d => setDuration(d)}
+                onChange={(d) => setDuration(d)}
                 style={{ width: "100%" }}
               />
             </div>
             <div style={{ marginLeft: 10, marginRight: 10 }} />
             <div style={{ flex: 1, flexDirection: "column" }}>
               <div style={{ marginBottom: 5 }}>Start full:</div>
-              <Radio.Group onChange={e => setStartFull(e.target.value)} value={startFull}>
+              <Radio.Group
+                onChange={(e) => setStartFull(e.target.value)}
+                value={startFull}
+              >
                 <Radio value={1}>Yes</Radio>
                 <Radio value={0}>No</Radio>
               </Radio.Group>
@@ -117,8 +137,8 @@ export default function Home({ mainnetProvider, tx, writeContracts, readContract
         <List
           bordered
           dataSource={streams}
-          renderItem={item => (
-            <List.Item>
+          renderItem={(item) => (
+            <List.Item id={item.stream} key={item.stream + "_" + item.creator}>
               <div
                 style={{
                   width: "100%",
