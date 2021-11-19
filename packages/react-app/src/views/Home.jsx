@@ -71,7 +71,7 @@ export default function Home({
     console.log("awaiting metamask/web3 confirm result...", result);
     console.log(await result);
   };
-
+  let count = 0;
   return (
     <div style={{ width: 600, margin: "20px auto", padding: 20 }}>
       <Button
@@ -138,7 +138,7 @@ export default function Home({
           bordered
           dataSource={streams}
           renderItem={(item) => (
-            <List.Item id={item.stream} key={item.stream + "_" + item.creator}>
+            <List.Item id={count++ + "_" + item.stream} key={count++ + "_" + item.stream + "_" + item.creator}>
               <div
                 style={{
                   width: "100%",
@@ -159,6 +159,7 @@ export default function Home({
               </div>
             </List.Item>
           )}
+          
         />
       </div>
     </div>
